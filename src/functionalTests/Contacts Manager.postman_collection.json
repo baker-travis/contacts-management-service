@@ -1,0 +1,158 @@
+{
+	"info": {
+		"_postman_id": "61319331-34d3-4d82-91a1-973550ed88a9",
+		"name": "Contacts Manager",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Contact",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "db8a3dbe-6c78-44b2-b6f4-5edd7a670e23",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"const responseData = pm.response.json();",
+							"",
+							"pm.test(\"Returns object with uuid\", function () {",
+							"    pm.expect(responseData).to.have.property('uuid');",
+							"});",
+							"",
+							"pm.environment.set(\"currentContact\", JSON.stringify(responseData));",
+							"pm.environment.set(\"currentUuid\", responseData.uuid);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\": \"Megan\",\n\t\"lastName\": \"Baker\",\n\t\"email\": \"meganaw82@gmail.com\",\n\t\"phone\": \"8327907147\",\n\t\"street\": \"1824 Megan Creek Dr\",\n\t\"city\": \"Little Elm\",\n\t\"state\": \"TX\",\n\t\"zip\": \"75068\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Contacts List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4341a5c7-fbc4-4450-bb75-f72495a1d517",
+						"exec": [
+							"const currentUuid = pm.environment.get(\"currentUuid\");",
+							"",
+							"const responseData = pm.response.json();",
+							"",
+							"const foundResponse = responseData.find((contact) => contact.uuid === currentUuid);",
+							"",
+							"pm.test(\"Found POSTed contact\", function () {",
+							"    pm.expect(foundResponse.uuid).to.eql(currentUuid);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/contacts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"contacts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE Contact",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1d766b9c-43ff-42a0-b341-6eef8589b5eb",
+						"exec": [
+							"const currentUuid = pm.environment.get(\"currentUuid\");",
+							"",
+							"// Request contacts endpoint",
+							"pm.sendRequest(\"http://localhost:8080/api/v1/contacts\", (err, response) => {",
+							"    const responseData = response.json();",
+							"",
+							"    const foundResponse = responseData.find((contact) => contact.uuid === currentUuid);",
+							"    ",
+							"    pm.test('DELETEd object no longer exists', function() {",
+							"        pm.expect(foundResponse).to.eql(undefined);",
+							"    });",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/contacts/{{currentUuid}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"contacts",
+						"{{currentUuid}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

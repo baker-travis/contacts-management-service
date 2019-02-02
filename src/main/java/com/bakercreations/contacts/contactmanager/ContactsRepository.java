@@ -18,9 +18,9 @@ public class ContactsRepository {
         this.contacts = new HashMap<>();
     }
 
-    public Contact addContact(Contact toAdd) throws Error {
+    public Contact addContact(Contact toAdd) throws RuntimeException {
         if (toAdd == null) {
-            throw new Error("Invalid contact");
+            throw new RuntimeException("Invalid contact");
         }
         String uuid = UUID.randomUUID().toString();
         toAdd.setUuid(uuid);
@@ -34,9 +34,9 @@ public class ContactsRepository {
         return new ArrayList<>(contacts.values());
     }
 
-    public Contact updateContact(String uuid, Contact updatedContact) throws Error {
+    public Contact updateContact(String uuid, Contact updatedContact) throws RuntimeException {
         if (uuid != updatedContact.getUuid()) {
-            throw new Error("uuid's do not match");
+            throw new RuntimeException("uuid's do not match");
         }
 
         contacts.put(uuid, updatedContact);

@@ -33,13 +33,14 @@ public class ContactController {
         return inserted;
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @RequestMapping(path="/contacts/{uuid}", method=RequestMethod.PUT)
-    public Contact updateContact(@RequestBody Contact updatedContact, @PathVariable String uuid) {
-        contactsRepo.updateContact(uuid, updatedContact);
+    // TODO: When implementing updates, uncomment
+    // @CrossOrigin(origins = "http://localhost:3000")
+    // @RequestMapping(path="/contacts/{uuid}", method=RequestMethod.PUT)
+    // public Contact updateContact(@RequestBody Contact updatedContact, @PathVariable String uuid) {
+    //     contactsRepo.updateContact(uuid, updatedContact);
 
-        return updatedContact;
-    }
+    //     return updatedContact;
+    // }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @RequestMapping(path="/contacts/{uuid}", method=RequestMethod.DELETE)

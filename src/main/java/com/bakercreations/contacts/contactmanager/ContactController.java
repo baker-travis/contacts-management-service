@@ -1,45 +1,45 @@
 package com.bakercreations.contacts.contactmanager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.bakercreations.contacts.contactmanager.entities.Contact;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ContactController {
+    @Autowired
+    private ContactsRepository contactsRepo;
+
     @RequestMapping(path="/contacts", method=RequestMethod.GET)
     public List<Contact> getContacts() {
-        List<Contact> contacts = new ArrayList<>();
-        Contact contactToAdd = new Contact();
-        contactToAdd.setFirstName("Travis");
-        contactToAdd.setLastName("Baker");
-        contactToAdd.setCity("Little Elm");
-        contactToAdd.setEmail("baker.travis.w@gmail.com");
-        contactToAdd.setPhone("8325175400");
-        contactToAdd.setState("TX");
-        contactToAdd.setStreet("1824 Megan Creek Dr");
-        contactToAdd.setUuid("1");
-        contactToAdd.setZip("75068");
-        contacts.add(contactToAdd);
-        return contacts;
+        return contactsRepo.getContacts();
     }
 
     @RequestMapping(path="/contacts", method=RequestMethod.POST)
-    public Contact addNewContact() {
-        return new Contact();
+    @ResponseStatus(HttpStatus.CREATED)
+    public Contact addNewContact(@RequestBody Contact contact) {
+        Contact inserted = contactsRepo.addContact(contact);
+        return inserted;
     }
 
-    @RequestMapping(path="/contacts", method=RequestMethod.PUT)
-    public Contact updateContact() {
-        return new Contact();
+    @RequestMapping(path="/contacts/{uuid}", method=RequestMethod.PUT)
+    public Contact updateContact(@RequestBody Contact updatedContact, @PathVariable String uuid) {
+        contactsRepo.updateContact(uuid, updatedContact);
+
+        return updatedContact;
     }
 
-    @RequestMapping(path="/contacts", method=RequestMethod.DELETE)
-    public void removeContact() {
-
+    @RequestMapping(path="/contacts/{uuid}", method=RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeContact(@PathVariable String uuid) {
+        contactsRepo.deleteContact(uuid);
     }
 }

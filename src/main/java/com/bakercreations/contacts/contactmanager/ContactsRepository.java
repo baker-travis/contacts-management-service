@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.bakercreations.contacts.contactmanager.entities.Contact;
+import com.bakercreations.contacts.contactmanager.exceptions.ContactNotFoundException;
+import com.bakercreations.contacts.contactmanager.exceptions.InvalidContactException;
 
 import org.springframework.stereotype.Component;
 
@@ -18,9 +20,16 @@ public class ContactsRepository {
         this.contacts = new HashMap<>();
     }
 
-    public Contact addContact(Contact toAdd) throws Error {
+    /**
+     * Adds a contact to the repository
+     * @param toAdd the contact to add
+     * @return the contact added to the repository, with updated uuid
+     * @throws InvalidContactException if the contact is null
+     */
+    public Contact addContact(Contact toAdd) throws InvalidContactException {
         if (toAdd == null) {
-            throw new Error("Invalid contact");
+            // TODO: more validation to ensure that the request is valid
+            throw new InvalidContactException("Contact cannot be null");
         }
         String uuid = UUID.randomUUID().toString();
         toAdd.setUuid(uuid);
@@ -30,6 +39,10 @@ public class ContactsRepository {
         return toAdd;
     }
 
+    /**
+     * Gets all the contacts in the repository
+     * @return the list of contacts
+     */
     public List<Contact> getContacts() {
         return new ArrayList<>(contacts.values());
     }
@@ -44,8 +57,15 @@ public class ContactsRepository {
     //     return updatedContact;
     // }
 
-    public void deleteContact(String uuid) {
-        // TODO: if contact doesn't exist, throw error
+    /**
+     * Deletes a single contact by a given uuid
+     * @param uuid the contact that needs to be deleted
+     * @throws ContactNotFoundException if the uuid doesn't exist in the collection
+     */
+    public void deleteContact(String uuid) throws ContactNotFoundException {
+        if (!contacts.containsKey(uuid)) {
+            throw new ContactNotFoundException(uuid);
+        }
         contacts.remove(uuid);
     }
 }

@@ -3,6 +3,8 @@ package com.bakercreations.contacts.contactmanager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bakercreations.contacts.contactmanager.entities.Contact;
+import com.bakercreations.contacts.contactmanager.exceptions.ContactNotFoundException;
+import com.bakercreations.contacts.contactmanager.exceptions.InvalidContactException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +36,7 @@ public class ContactsRepositoryTests {
         assertThat(contact.getUuid()).isNotBlank();
     }
 
-    @Test(expected = Error.class)
+    @Test(expected = InvalidContactException.class)
     public void addContactFailure() throws Error {
         contactsRepo.addContact(null);
         assertThat(contactsRepo.getContacts()).isEmpty();
@@ -50,6 +52,11 @@ public class ContactsRepositoryTests {
 
         contactsRepo.deleteContact(contact.getUuid());
         assertThat(contactsRepo.getContacts()).isEmpty();
+    }
+
+    @Test(expected = ContactNotFoundException.class)
+    public void deleteContactThatDoesntExist() {
+        contactsRepo.deleteContact("someRandomUuidThatDoesntExist");
     }
 
     private Contact setUpContact() {
